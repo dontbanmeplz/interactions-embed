@@ -13,7 +13,7 @@ $(document).ready(function () {
   var fields = 1;
 
   var source = '';
-
+  var n = '';
   var embed = {
     title: '',
     author: {
@@ -39,27 +39,27 @@ $(document).ready(function () {
     resetEmbed();
 
     // add basic embed generation to source
-    source = 'embed=interactions.Embed(';
-
+    source = '';
+    n = "embed=interactions.Embed(";
     if (embed.url) {
       $('.embed-inner').append('<div class="embed-title"><a href="' + embed.url + '">' + embed.title + '</a></div>');
 
       // update source
       if (switches.useVars) {
-        source += 'title=' + embed.title + ', url=' + embed.url;
+        n += 'title=' + embed.title + ', url=' + embed.url;
       } else {
-        source += 'title="' + embed.title + '", url="' + embed.url + '"';
+        n += 'title="' + embed.title + '", url="' + embed.url + '"';
       }
     } else if (embed.title.length === 0) {
-      source += "";
+      n += "";
     } else {
       $('.embed-inner').append('<div class="embed-title">' + embed.title + '</div>');
 
       // update source
       if (switches.useVars) {
-        source += 'title=' + embed.title;
+        n += 'title=' + embed.title;
       } else {
-        source += 'title="' + embed.title + '"';
+        n += 'title="' + embed.title + '"';
       }
 
     }
@@ -68,30 +68,30 @@ $(document).ready(function () {
       $('.embed-inner').append('<div class="embed-description">' + converter.makeHtml(embed.description) + '</div>');
 
       if (embed.title.length > 0 || embed.url.length > 0) {
-        source += ', '
+        n += ', '
       }
 
       // update source
       if (switches.useVars) {
-        source += 'description=' + embed.description;
+        n += 'description=' + embed.description;
       } else {
-        source += 'description="' + embed.description + '"';
+        n += 'description="' + embed.description + '"';
       }
+      n += ", "
     }
 
     if (embed.color) {
       $('.side-colored').css('background-color', embed.color);
 
       if (embed.title.length > 0 || embed.url.length > 0) {
-        source += ', '
+        n += ', '
       }
 
       // update source
-      source += 'color=0x' + embed.color.substr(1);
+      n += 'color=0x' + embed.color.substr(1) + ", ";
     }
 
     // finished the basic setup
-    source += ')\n';
 
     if (embed.author.name) {
       // add author to source
@@ -135,8 +135,8 @@ $(document).ready(function () {
 
     if (embed.thumb_url) {
       // add thumbnail
-      source += 'interactions.Embedthumbnail(';
-
+      source += 'thumbnail = interactions.Embedthumbnail(';
+      n += "thumbnail = thumbnail, "
       $('.card.embed .card-block').append('<img class="embed-thumb" src="' + embed.thumb_url + '" />');
       $('.embed-thumb').height($('.embed-thumb')[0].naturalHeight);
 
@@ -152,9 +152,9 @@ $(document).ready(function () {
     }
 
     if (embed.fields.length > 0) {
+      source += "fields = [";
       $('.embed-inner').append('<div class="fields"></div>');
     }
-
     for (var _iterator = embed.fields, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
       var _ref;
 
@@ -170,18 +170,22 @@ $(document).ready(function () {
       var field = _ref;
 
       $('.embed-inner .fields').append('\n        <div class="field ' + (field.inline && 'inline') + '">\n          <div class="field-name">' + field.name + '</div>\n          <div class="field-value">' + converter.makeHtml(field.value) + '</div>\n        </div>\n      ');
-
+      
       // add field
       if (switches.useVars) {
-        source += 'interactions.EmbedField(name=' + field.name + ', value=' + field.value + ', inline=' + (field.inline && 'True' || 'False') + ')\n';
+        source += 'interactions.EmbedField(name=' + field.name + ', value=' + field.value + ', inline=' + (field.inline && 'True' || 'False') + '),\n';
       } else {
-        source += 'interactions.EmbedField(name="' + field.name + '", value="' + field.value + '", inline=' + (field.inline && 'True' || 'False') + ')\n';
+        source += 'interactions.EmbedField(name="' + field.name + '", value="' + field.value + '", inline=' + (field.inline && 'True' || 'False') + '),\n';
       }
     }
-
+    if (embed.fields.length > 0) {
+      source += "]\n";
+      n += "fields=fields, "
+    }
     if (embed.footer) {
       $('.card.embed').append('<div class="embed-footer"><span>' + embed.footer + '</span></div>');
-
+      source += "footer = "
+      n += "footer = footer, "
       // add footer
       if (switches.useVars) {
         source += 'interactions.EmbedFooter(text=' + embed.footer + ')\n';
@@ -191,6 +195,10 @@ $(document).ready(function () {
     }
 
     // add send function
+    source += "embed=interactions.Embed("
+    source += n 
+    source += ")\n"
+    
     source += 'await ctx.send(embed=embed)\n';
 
     // code
