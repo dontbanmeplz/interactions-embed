@@ -40,15 +40,15 @@ $(document).ready(function () {
 
     // add basic embed generation to source
     source = '';
-    n = "embed=interactions.Embed(";
+    n = "embed=interactions.Embed(\n";
     if (embed.url) {
       $('.embed-inner').append('<div class="embed-title"><a href="' + embed.url + '">' + embed.title + '</a></div>');
 
       // update source
       if (switches.useVars) {
-        n += 'title=' + embed.title + ', url=' + embed.url;
+        n += '  title=' + embed.title + ',\n    url=' + embed.url;
       } else {
-        n += 'title="' + embed.title + '", url="' + embed.url + '"';
+        n += '  title="' + embed.title + '",\n    url="' + embed.url + '"';
       }
     } else if (embed.title.length === 0) {
       n += "";
@@ -57,9 +57,9 @@ $(document).ready(function () {
 
       // update source
       if (switches.useVars) {
-        n += 'title=' + embed.title;
+        n += '    title=' + embed.title + '\n';
       } else {
-        n += 'title="' + embed.title + '"';
+        n += '    title="' + embed.title + '"\n';
       }
 
     }
@@ -73,9 +73,9 @@ $(document).ready(function () {
 
       // update source
       if (switches.useVars) {
-        n += 'description=' + embed.description;
+        n += '    description=' + embed.description + '\n;
       } else {
-        n += 'description="' + embed.description + '"';
+        n += '    description="' + embed.description + '"\n';
       }
       n += ", "
     }
@@ -88,49 +88,49 @@ $(document).ready(function () {
       }
 
       // update source
-      n += 'color=0x' + embed.color.substr(1) + ", ";
+      n += '    color=0x' + embed.color.substr(1) + ", \n";
     }
 
     // finished the basic setup
 
     if (embed.author.name) {
       // add author to source
-      source += 'interactions.EmbedAuthor(';
+      source += '    interactions.EmbedAuthor(\n';
 
       $('.embed-title').before('<div class="embed-author"><a class="embed-author-name" href="' + embed.author.url + '">' + embed.author.name + '</a></div>');
 
       // update source
       if (switches.useVars) {
-        source += 'name=' + embed.author.name;
+        source += '        name=' + embed.author.name;
       } else {
-        source += 'name="' + embed.author.name + '"';
+        source += '        name="' + embed.author.name + '"';
       }
 
       if(embed.author.url) {
-        source += ', ';
+        source += ', \n';
 
         if (switches.useVars) {
-          source += 'url=' + embed.author.url;
+          source += '        url=' + embed.author.url;
         } else {
-          source += 'url="' + embed.author.url + '"';
+          source += '        url="' + embed.author.url + '"';
         }
       }
 
       if (embed.author.icon) {
         $('.embed-author-name').before('<img class="embed-author-icon" src="' + embed.author.icon + '" />');
 
-        source += ', ';
+        source += ', \n';
 
         // update source
         if (switches.useVars) {
-          source += 'icon_url=' + embed.author.icon;
+          source += '        icon_url=' + embed.author.icon;
         } else {
-          source += 'icon_url="' + embed.author.icon + '"';
+          source += '        icon_url="' + embed.author.icon + '"';
         }
       }
 
       // finish author
-      source += ')\n';
+      source += '\n    )\n';
     }
 
     if (embed.thumb_url) {
