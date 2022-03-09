@@ -73,9 +73,9 @@ $(document).ready(function () {
 
       // update source
       if (switches.useVars) {
-        n += '    description=' + embed.description + '\n;
+        n += '    description=' + embed.description + '\n';
       } else {
-        n += '    description="' + embed.description + '"\n';
+        n += '    description="' + embed.description + '" \n';
       }
       n += ", "
     }
